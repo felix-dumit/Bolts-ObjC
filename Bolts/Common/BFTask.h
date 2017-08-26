@@ -26,10 +26,27 @@ extern NSString *const BFTaskErrorDomain;
 extern NSInteger const kBFMultipleErrorsError;
 
 /*!
+ An exception that is thrown if there was multiple exceptions on <BFTask taskForCompletionOfAllTasks:>.
+
+ @deprecated `BFTask` exception handling is deprecated and will be removed in a future release.
+ */
+extern NSString *const BFTaskMultipleExceptionsException
+__attribute__((deprecated("`BFTask` exception handling is deprecated and will be removed in a future release.")));
+
+/*!
  An error userInfo key used if there were multiple errors on <BFTask taskForCompletionOfAllTasks:>.
  Value type is `NSArray<NSError *> *`.
  */
 extern NSString *const BFTaskMultipleErrorsUserInfoKey;
+
+/*!
+ An error userInfo key used if there were multiple exceptions on <BFTask taskForCompletionOfAllTasks:>.
+ Value type is `NSArray<NSException *> *`.
+
+ @deprecated `BFTask` exception handling is deprecated and will be removed in a future release.
+ */
+extern NSString *const BFTaskMultipleExceptionsUserInfoKey
+__attribute__((deprecated("`BFTask` exception handling is deprecated and will be removed in a future release.")));
 
 @class BFExecutor;
 @class BFTask;
@@ -57,6 +74,15 @@ typedef __nullable id(^BFContinuationBlock)(BFTask<ResultType> *t);
  @param error The error for the task.
  */
 + (instancetype)taskWithError:(NSError *)error;
+
+/*!
+ Creates a task that is already completed with the given exception.
+ @param exception The exception for the task.
+
+ @deprecated `BFTask` exception handling is deprecated and will be removed in a future release.
+ */
++ (instancetype)taskWithException:(NSException *)exception
+__attribute__((deprecated("`BFTask` exception handling is deprecated and will be removed in a future release.")));
 
 /*!
  Creates a task that is already cancelled.
@@ -126,12 +152,20 @@ typedef __nullable id(^BFContinuationBlock)(BFTask<ResultType> *t);
 @property (nullable, nonatomic, strong, readonly) NSError *error;
 
 /*!
+ The exception of a failed task.
+
+ @deprecated `BFTask` exception handling is deprecated and will be removed in a future release.
+ */
+@property (nullable, nonatomic, strong, readonly) NSException *exception
+__attribute__((deprecated("`BFTask` exception handling is deprecated and will be removed in a future release.")));
+
+/*!
  Whether this task has been cancelled.
  */
 @property (nonatomic, assign, readonly, getter=isCancelled) BOOL cancelled;
 
 /*!
- Whether this task has completed due to an error.
+ Whether this task has completed due to an error or exception.
  */
 @property (nonatomic, assign, readonly, getter=isFaulted) BOOL faulted;
 
@@ -197,7 +231,7 @@ NS_SWIFT_NAME(continueWith(executor:block:cancellationToken:));
 
 /*!
  Identical to continueWithBlock:, except that the block is only run
- if this task did not produce a cancellation or an error.
+ if this task did not produce a cancellation, error, or exception.
  If it did, then the failure will be propagated to the returned
  task.
  @param block The block to be run once this task is complete.
@@ -209,7 +243,7 @@ NS_SWIFT_NAME(continueWith(executor:block:cancellationToken:));
 
 /*!
  Identical to continueWithBlock:, except that the block is only run
- if this task did not produce a cancellation or an error.
+ if this task did not produce a cancellation, error, or exception.
  If it did, then the failure will be propagated to the returned
  task.
  @param block The block to be run once this task is complete.
@@ -224,8 +258,9 @@ NS_SWIFT_NAME(continueOnSuccessWith(block:cancellationToken:));
 
 /*!
  Identical to continueWithExecutor:withBlock:, except that the block
- is only run if this task did not produce a cancellation, error, or an error.
- If it did, then the failure will be propagated to the returned task.
+ is only run if this task did not produce a cancellation, error, or
+ exception. If it did, then the failure will be propagated to the
+ returned task.
  @param executor A BFExecutor responsible for determining how the
  continuation block will be run.
  @param block The block to be run once this task is complete.
@@ -238,8 +273,9 @@ NS_SWIFT_NAME(continueOnSuccessWith(block:cancellationToken:));
 
 /*!
  Identical to continueWithExecutor:withBlock:, except that the block
- is only run if this task did not produce a cancellation or an error.
- If it did, then the failure will be propagated to the returned task.
+ is only run if this task did not produce a cancellation, error, or
+ exception. If it did, then the failure will be propagated to the
+ returned task.
  @param executor A BFExecutor responsible for determining how the
  continuation block will be run.
  @param block The block to be run once this task is complete.
